@@ -32,6 +32,25 @@ services:
     ports:
       - "8080"
     volumes:
-      - /var/run:/var/run:rw
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /dev/disk/:/dev/disk:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - "9100"
+    links:
+      - prometheus
