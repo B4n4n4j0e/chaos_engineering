@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  api:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - prometheus
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./src/main/resources:/etc/prometheus
+    links:
+      - grafana
+  grafana:
+    ports:
+      - "3000:3000"
+    image: grafana/grafana
+
+  cadvisor:
+    image: google/cadvisor
+    links:
+      - prometheus
+    ports:
+      - "8080"
+    volumes:
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
