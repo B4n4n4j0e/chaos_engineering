@@ -1,34 +1,53 @@
 version: "3.9"
+volumes:
+  grafana-volume-1:
+  prometheus-volume-1:
+
+networks:
+  grafana:
+  metrics:
+
 services:
-  api:
+  product-service:
+    restart: always
     deploy:
+      replicas: 1
       resources:
         limits:
-          cpus: "0.1"
+          cpus: "0.5"
           memory: 512M
-        reservations:
-          cpus: "0.1"
-          memory: 128M
     build: .
     ports:
       - "8080:8080"
-    links:
-      - prometheus
+    networks:
+      - metrics
+
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./src/main/resources:/etc/prometheus
-    links:
+      - ./resources/prometheus:/etc/prometheus
+      - prometheus-volume-1:/prometheus
+    networks:
+      - metrics
       - grafana
+    ports:
+      - "9090:9090"
   grafana:
     ports:
       - "3000:3000"
     image: grafana/grafana
+    environment:
+      - "GF_AUTH_ANONYMOUS_ENABLED=true"
+      - "GF_AUTH_DISABLE_LOGIN_FORM=true"
+      - "GF_AUTH_ANONYMOUS_ORG_ROLE=Admin"
+
+    volumes:
+      - grafana-volume-1:/var/lib/grafana
+    networks:
+      - grafana
 
   cadvisor:
-    image: google/cadvisor
-    links:
-      - prometheus
+    image: gcr.io/cadvisor/cadvisor
     ports:
       - "8080"
     volumes:
@@ -37,6 +56,9 @@ services:
       - /dev/disk/:/dev/disk:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - metrics
+
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -44,13 +66,13 @@ services:
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
-      - /:/rootfs:ro
+    #  - /:/rootfs:ro
     command:
       - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
+     # - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     expose:
       - "9100"
-    links:
-      - prometheus
+    networks:
+      - metrics

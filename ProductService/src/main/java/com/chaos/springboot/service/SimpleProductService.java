@@ -1,0 +1,146 @@
+package com.chaos.springboot.service;
+
+import com.chaos.springboot.dto.ProductDto;
+import com.chaos.springboot.products.Product;
+import com.chaos.springboot.util.ProductMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+@Service
+public class SimpleProductService implements ProductService {
+
+    private final ProductMapper converter = new ProductMapper();
+    private final ConcurrentSkipListMap<Long, Product> products = new ConcurrentSkipListMap<>();
+
+
+    /**
+     * Returns current list of Products
+     * and the command line arguments.
+     * @param page An int containing the requested page
+     * @return list of ProductDtos .
+     */
+    public List<ProductDto> getProducts(int page) {
+        List<ProductDto> result = new ArrayList<>();
+        AtomicInteger i = new AtomicInteger(page);
+        int startingPage = page * 50;
+        products.forEach((ean, product) -> {
+            if (result.size() < 50 && startingPage <= i.get()) {
+                result.add(converter.convertToDto(product));
+                i.getAndIncrement();
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Returns ProductDto by Id
+     * @param id An Long containing the ean of the Product
+     * @return ProductDto .
+     * @throws ResponseStatusException if entitiy not found
+     */
+    public ProductDto getProductById(Long id) {
+        Product product = products.get(id);
+        if (product != null) {
+            return converter.convertToDto(product);
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+    }
+
+    /**
+     * Creates new ProductDto and adds it to the local list
+     * @param newProduct ProductDTO to be created
+     * @return new ProductDto
+     * @throws ResponseStatusException if entity already exists
+     */
+    public ProductDto createProduct(ProductDto newProduct) {
+        if (products.containsKey(Long.parseLong(newProduct.getEan()))) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "entity already exists"
+            );
+        }
+        Product product = converter.convertToEntity(newProduct);
+        products.put(product.getEan(), product);
+        newProduct.setRating(0.0);
+        newProduct.setRatingCounter(0);
+        return newProduct;
+    }
+
+    /**
+     * Updates ProductDto in local list
+     * @param newProduct A ProductDTO
+     * @return new ProductDto
+     * @throws ResponseStatusException if entitiy not found
+     */
+    public ProductDto updateProduct(ProductDto newProduct) {
+        if (products.containsKey(Long.parseLong(newProduct.getEan()))) {
+            Product product = products.get(Long.parseLong(newProduct.getEan()));
+            product.setName(newProduct.getName());
+            return newProduct;
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+    }
+
+    /**
+     * Deletes ProductDto in local list
+     * @param id of ProductDTO to be deleted
+     * @throws ResponseStatusException if entitiy not found
+     */
+    public void deleteProduct(Long id) {
+        Product product = products.get(id);
+        if (product != null) {
+            products.remove(id);
+        } else throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+    }
+
+    /**
+     * Updates Rating for ProductDto in local list
+     * @param ratedProduct ProductDTO to be evaluated
+     * @return updated ProductDTO
+     * @throws ResponseStatusException if entitiy not found
+     */
+    @Override
+    public ProductDto submitRating(ProductDto ratedProduct) {
+        if (products.containsKey(Long.parseLong(ratedProduct.getEan()))) {
+            Product product = products.get(Long.parseLong(ratedProduct.getEan()));
+            product.incrementRatingCounter();
+            double newValue = product.getRating() + ratedProduct.getRating();
+            product.setRating(newValue);
+            return  converter.convertToDto(product);
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+    }
+
+    /**
+     * Returns Top K ProductDto list by rating
+     * @param size of the list
+     * @return list of top k ProductDtos
+     */
+    @Override
+    public List<ProductDto> getTopKRating(int size) {
+        List<ProductDto> result = new ArrayList<>();
+        List<Product> topK = products.values().stream()
+                .sorted(Comparator
+                        .comparing(Product::getCalculatedRating).reversed()
+                        .thenComparing(Product::getRatingCounter).reversed())
+                .collect(Collectors.toList());
+        for (int i = 0; i < topK.size() && result.size() <= size; i++) {
+            result.add(converter.convertToDto(topK.get(i)));
+        }
+        return result;
+    }
+}
+

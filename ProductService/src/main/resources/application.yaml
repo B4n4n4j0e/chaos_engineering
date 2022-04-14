@@ -1,0 +1,18 @@
+spring:
+  application:
+    # Name of the application (important for logging)
+    name: ProductService
+  mvc:
+    # Deactivates logging of default exceptions which are handled by DefaultHandlerExceptionResolver
+    log-resolved-exception: false
+
+#Activates Prometheus logging
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      #Adds tag for logging purposes
+      application: ${spring.application.name}
