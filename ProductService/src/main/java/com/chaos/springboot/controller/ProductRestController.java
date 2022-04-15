@@ -1,10 +1,6 @@
 package com.chaos.springboot.controller;
 import com.chaos.springboot.dto.ProductDto;
-import com.chaos.springboot.service.ProductService;
-import com.chaos.springboot.service.SimpleProductService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -12,59 +8,49 @@ import java.util.List;
 @RequestMapping("/api")
 public class ProductRestController {
 
-    private final ProductService productService = new SimpleProductService();
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
-    public List<ProductDto> products(@RequestParam(value = "page",required = false) Integer page)  {
-        if (page == null ||page < 0) {
-            page = 0;
-        }
-        return productService.getProducts(page);
+    public List<ProductDto> products()  {
+        // TODO: Implement method
+        return null;
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products/{id}")
-    public ProductDto product(@PathVariable Long id) {
-        return productService.getProductById(id);
+    public ProductDto product() {
+        // TODO: Implement method
+        return null;
+
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/products")
-    public ProductDto post(@RequestBody ProductDto newProduct) {
-        return productService.createProduct(newProduct);
+    public ProductDto post() {
+        // TODO: Implement method
+        return null;
 
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PutMapping("/products")
-    public ProductDto update(@RequestBody ProductDto newProduct) {
-        return productService.updateProduct(newProduct);
+    public ProductDto update() {
+        // TODO: Implement method
+        return null;
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @DeleteMapping("/products/{id}")
-    public void delete(@PathVariable Long id) {
-        productService.deleteProduct(id);
-
+    public void delete() {
+        // TODO: Implement method
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/products/rating")
-    public ProductDto postRating(@RequestBody ProductDto newProduct) {
-        if (newProduct.getRating() != null && ( newProduct.getRating() > 5 || newProduct.getRating() < 0)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating x must be in the format 0 <= x <= 5");
-        }
-        return productService.submitRating(newProduct);
+    public ProductDto postRating() {
+        // TODO: Implement method
+        return null;
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/rating/top","/products/rating/top/{k}"})
-    public List<ProductDto> getTopKRating(@PathVariable(required = false) Integer k) {
-        if (k == null) {
-            k = 10;
-        }
-        return productService.getTopKRating(k);
+    public List<ProductDto> getTopKRating() {
+        // TODO: Implement method
+        return null;
+
     }
 
 }

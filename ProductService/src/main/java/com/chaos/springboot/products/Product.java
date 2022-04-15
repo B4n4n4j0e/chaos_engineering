@@ -1,6 +1,4 @@
 package com.chaos.springboot.products;
-import com.chaos.springboot.util.MathHelper;
-
 import java.io.Serializable;
 
 
@@ -43,13 +41,6 @@ public class Product implements Serializable {
 
     public double getRating() {
         return rating;
-    }
-
-    public double getCalculatedRating() {
-        if (this.ratingCounter == 0) {
-            return 0.0;
-        }
-        return MathHelper.round(this.getRating()/ this.getRatingCounter(),2);
     }
 
     public void incrementRatingCounter() {

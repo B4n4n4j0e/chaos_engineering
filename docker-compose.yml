@@ -1,17 +1,9 @@
 version: "3.9"
-volumes:
-  grafana-volume-1:
-  prometheus-volume-1:
-
-networks:
-  grafana:
-  metrics:
 
 services:
   product-service:
     restart: always
     deploy:
-      replicas: 1
       resources:
         limits:
           cpus: "0.5"
@@ -19,17 +11,12 @@ services:
     build: .
     ports:
       - "8080:8080"
-    networks:
-      - metrics
 
   prometheus:
     image: prom/prometheus
     volumes:
       - ./resources/prometheus:/etc/prometheus
-      - prometheus-volume-1:/prometheus
-    networks:
-      - metrics
-      - grafana
+
     ports:
       - "9090:9090"
   grafana:
@@ -40,10 +27,6 @@ services:
       - "GF_AUTH_ANONYMOUS_ENABLED=true"
       - "GF_AUTH_DISABLE_LOGIN_FORM=true"
       - "GF_AUTH_ANONYMOUS_ORG_ROLE=Admin"
-    volumes:
-      - grafana-volume-1:/var/lib/grafana
-    networks:
-      - grafana
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
@@ -55,8 +38,6 @@ services:
       - /dev/disk/:/dev/disk:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      - metrics
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -74,5 +55,3 @@ services:
      # Uncomment for running in vm - '--no-collector.powersupplyclass'
     expose:
       - "9100"
-    networks:
-      - metrics
