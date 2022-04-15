@@ -11,7 +11,6 @@ services:
   product-service:
     restart: always
     deploy:
-      replicas: 1
       resources:
         limits:
           cpus: "0.5"
