@@ -22,7 +22,7 @@ services:
       - metrics
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.34.0
     volumes:
       - ./resources/prometheus:/etc/prometheus
       - prometheus-volume-1:/prometheus
