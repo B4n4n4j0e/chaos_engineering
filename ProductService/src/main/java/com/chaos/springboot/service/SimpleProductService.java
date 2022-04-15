@@ -30,13 +30,14 @@ public class SimpleProductService implements ProductService {
      */
     public List<ProductDto> getProducts(int page) {
         List<ProductDto> result = new ArrayList<>();
-        AtomicInteger i = new AtomicInteger(page);
-        int startingPage = page * 50;
+        int startPage = (page-1) * 50;
+        AtomicInteger i = new AtomicInteger();
         products.forEach((ean, product) -> {
-            if (result.size() < 50 && startingPage <= i.get()) {
+            if (result.size() < 50 && startPage <= i.get()) {
                 result.add(converter.convertToDto(product));
-                i.getAndIncrement();
             }
+            i.getAndIncrement();
+
         });
         return result;
     }
