@@ -27,9 +27,6 @@ public class ProductDto implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double rating;
 
-    @JsonProperty
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Double views;
 
     public ProductDto(String name, String ean, Integer ratingCounter, Double rating)   {
         this.name = name;
@@ -43,9 +40,6 @@ public class ProductDto implements Serializable {
     }
     public ProductDto() {
 
-    }
-    public void setViews(Double views) {
-        this.views = views;
     }
 
     public String getName() {
@@ -70,7 +64,6 @@ public class ProductDto implements Serializable {
                 ", ean=" + ean +
                 ", ratingCounter=" + ratingCounter +'\'' +
                 ", rating=" + rating + '\'' +
-                ", views=" + views + '\'' +
                 '}';
     }
 

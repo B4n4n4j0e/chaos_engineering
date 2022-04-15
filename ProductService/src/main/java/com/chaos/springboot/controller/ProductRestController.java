@@ -59,12 +59,12 @@ public class ProductRestController {
     }
 
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping(value = {"products/rating/top","/products/rating/top/{size}"})
-    public List<ProductDto> getTopKRating(@PathVariable(required = false) Integer size) {
-        if (size == null) {
-            size = 10;
+    @GetMapping(value = {"products/rating/top","/products/rating/top/{k}"})
+    public List<ProductDto> getTopKRating(@PathVariable(required = false) Integer k) {
+        if (k == null) {
+            k = 10;
         }
-        return productService.getTopKRating(size);
+        return productService.getTopKRating(k);
     }
 
 }

@@ -17,16 +17,19 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.8.4'
+
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.6'
 
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.6.6'
+
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.6'
 
 }
 
+// necessary for Docker build script
 jar {
     enabled = false
 }

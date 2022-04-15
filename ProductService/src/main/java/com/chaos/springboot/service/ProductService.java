@@ -20,7 +20,7 @@ public interface ProductService {
 
     public  void deleteProduct(Long id);
 
-    public List<ProductDto> getTopKRating(int size);
+    public List<ProductDto> getTopKRating(int k);
 
 
 

@@ -126,18 +126,18 @@ public class SimpleProductService implements ProductService {
 
     /**
      * Returns Top K ProductDto list by rating
-     * @param size of the list
+     * @param k size of list
      * @return list of top k ProductDtos
      */
     @Override
-    public List<ProductDto> getTopKRating(int size) {
+    public List<ProductDto> getTopKRating(int k) {
         List<ProductDto> result = new ArrayList<>();
         List<Product> topK = products.values().stream()
                 .sorted(Comparator
-                        .comparing(Product::getCalculatedRating).reversed()
+                        .comparing(Product::getCalculatedRating)
                         .thenComparing(Product::getRatingCounter).reversed())
                 .collect(Collectors.toList());
-        for (int i = 0; i < topK.size() && result.size() <= size; i++) {
+        for (int i = 0; i < topK.size() && result.size() <= k; i++) {
             result.add(converter.convertToDto(topK.get(i)));
         }
         return result;

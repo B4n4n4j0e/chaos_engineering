@@ -45,7 +45,7 @@ public class Product implements Serializable {
         return rating;
     }
 
-    public Double getCalculatedRating() {
+    public double getCalculatedRating() {
         if (this.ratingCounter == 0) {
             return 0.0;
         }
