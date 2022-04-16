@@ -35,7 +35,12 @@ scrape_configs:
   - job_name: 'redis_exporter_targets'
     static_configs:
       - targets:
-          - redis://node-1-redis:6379
+          - redis://173.17.0.3:6379
+          - redis://173.17.0.4:6379
+          - redis://173.17.0.5:6379
+          - redis://173.17.0.6:6379
+          - redis://173.17.0.7:6379
+          - redis://173.17.0.8:6379
     metrics_path: /scrape
     relabel_configs:
       - source_labels: [__address__]
@@ -44,10 +49,3 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: redis-exporter:9121
-
-
-  # config for scraping the exporter itself
-  - job_name: 'redis_exporter'
-    static_configs:
-      - targets:
-          - redis-exporter:9121

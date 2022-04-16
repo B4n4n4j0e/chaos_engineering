@@ -3,13 +3,23 @@ volumes:
   grafana-volume-1:
   prometheus-volume-1:
   database-volume-1:
-  redis-volume-1:
+  redis-volume-2:
+  redis-volume-3:
+  redis-volume-4:
+  redis-volume-5:
+  redis-volume-6:
+  redis-volume-7:
 
 networks:
   grafana:
   metrics:
   database:
   redis:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 173.17.0.0/16
 
 services:
   product-service:
@@ -43,7 +53,7 @@ services:
       MYSQL_PASSWORD: "spring"
     volumes:
       - database-volume-1:/var/lib/mysql
-      - ./src/main/resources/init.sql:/data/application/init.sql
+      - ./ProductService/src/main/resources/init.sql:/data/application/init.sql
     deploy:
       resources:
         limits:
@@ -113,7 +123,8 @@ services:
     ports:
       - "6379"
     volumes:
-      - redis-volume-1:/data
+      - redis-volume-2:/data
+      - ./resources/redis/1/:/redis_config
     deploy:
       resources:
         limits:
@@ -121,11 +132,112 @@ services:
           memory: 200M
     networks:
       redis:
+        ipv4_address: 173.17.0.3
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
+  node-2-redis:
+    image: redis:6.2.6
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-3:/data
+      - ./resources/redis/2/:/redis_config
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+        ipv4_address: 173.17.0.4
+
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
+
+  node-3-redis:
+    image: redis:latest
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-4:/data
+      - ./resources/redis/3/:/redis_config
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+        ipv4_address: 173.17.0.5
+
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
+
+  node-4-redis:
+    image: redis:6.2.6
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-5:/data
+      - ./resources/redis/1/:/redis_config
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+        ipv4_address: 173.17.0.6
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
+
+  node-5-redis:
+    image: redis:6.2.6
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-6:/data
+      - ./resources/redis/2/:/redis_config
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+        ipv4_address: 173.17.0.7
+
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
+
+  node-6-redis:
+    image: redis:6.2.6
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-7:/data
+      - ./resources/redis/3/:/redis_config
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+        ipv4_address: 173.17.0.8
+    entrypoint:
+      - "redis-server"
+      - "/redis_config/redis.conf"
 
   redis-exporter:
-    image: oliver006/redis_exporter:v1.37.0
+    image: oliver006/redis_exporter
     environment:
-      REDIS_ADDR: "node-1-redis:6379"
+      REDIS_ADDR: " "
     depends_on:
       - prometheus
     ports:
@@ -138,3 +250,6 @@ services:
     networks:
       metrics:
       redis:
+    command:
+      - "-redis.addr=' '"
+      - "-is-cluster"

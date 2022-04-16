@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,22 +13,22 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.util.List;
+
+
 @Configuration
 @ConditionalOnProperty(
         value = "spring.redis.cluster.enabled",
-        havingValue = "false",
-        matchIfMissing = true
+        havingValue = "true"
 )
-public class RedisConfiguration {
+public class ClusterRedisConfiguration {
 
-    @Value("${spring.redis.host}")
-    private String HOST;
+    @Value("${spring.redis.cluster.nodes}")
+    private List<String> NODES;
 
-    @Value("${spring.redis.port}")
-    private int PORT;
 
     /**
-     * Creates new redisTemplate and sets default configuration
+     * Creates new redisTemplate for clusters and sets default configuration
      *
      * @return new redisTemplate
      */
@@ -47,7 +47,7 @@ public class RedisConfiguration {
         template.setValueSerializer(
                 new JdkSerializationRedisSerializer()
         );
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(HOST, PORT);
+        RedisClusterConfiguration configuration = new RedisClusterConfiguration(NODES);
         JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().build();
         JedisConnectionFactory factory = new JedisConnectionFactory(configuration, jedisClientConfiguration);
         factory.afterPropertiesSet();
