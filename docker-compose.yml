@@ -27,7 +27,8 @@ services:
     networks:
       - metrics
       - database
-
+    command:
+      - ':ProductService:run'
   mariadb:
     image: mariadb:10.8
     ports:
