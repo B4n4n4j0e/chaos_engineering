@@ -1,13 +1,26 @@
 package com.chaos.springboot.products;
+
 import com.chaos.springboot.util.MathHelper;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
-
+@Entity
+@Table(name = "product")
 public class Product implements Serializable {
 
+    @NotEmpty
+    @NotNull
     private String name;
+    @NotNull
+    @Id
+    @Column(unique = true, nullable = false)
     private long ean;
     private int ratingCounter;
     private double rating;
@@ -16,21 +29,22 @@ public class Product implements Serializable {
         this.name = name;
         this.ean = ean;
         this.ratingCounter = 0;
-        this.rating =0;
+        this.rating = 0;
     }
 
     public Product() {
     }
+
     public String getName() {
         return name;
     }
 
-    public Long getEan() {
-        return ean;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getEan() {
+        return ean;
     }
 
     public void setEan(long ean) {
@@ -45,28 +59,27 @@ public class Product implements Serializable {
         return rating;
     }
 
-    public double getCalculatedRating() {
-        if (this.ratingCounter == 0) {
-            return 0.0;
-        }
-        return MathHelper.round(this.getRating()/ this.getRatingCounter(),2);
-    }
-
-    public void incrementRatingCounter() {
-        this.ratingCounter +=1;
-    }
-
     public void setRating(double rating) {
         this.rating = rating;
     }
 
+    public double getCalculatedRating() {
+        if (this.ratingCounter == 0) {
+            return 0.0;
+        }
+        return MathHelper.round(this.getRating() / this.getRatingCounter(), 2);
+    }
+
+    public void incrementRatingCounter() {
+        this.ratingCounter += 1;
+    }
 
     @Override
     public String toString() {
         return "Product{" +
-                ", name="+ name +'\'' +
+                ", name=" + name + '\'' +
                 ", ean=" + ean + '\'' +
-                ", ratingCounter" + ratingCounter +'\'' +
+                ", ratingCounter" + ratingCounter + '\'' +
                 ", rating" + rating +
                 '}';
     }

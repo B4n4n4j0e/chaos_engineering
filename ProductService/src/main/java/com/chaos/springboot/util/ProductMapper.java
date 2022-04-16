@@ -11,15 +11,17 @@ public class ProductMapper {
 
     /**
      * Converts Product to ProductDTO
+     *
      * @param product Product to be converted
      * @return ProductDTO
      */
     public ProductDto convertToDto(Product product) {
-        return new ProductDto(product.getName(),product.getEan().toString(), product.getRatingCounter(), product.getCalculatedRating());
+        return new ProductDto(product.getName(), product.getEan().toString(), product.getRatingCounter(), product.getCalculatedRating());
     }
 
     /**
      * Converts ProductDTO to Product
+     *
      * @param product ProductDTO to be converted
      * @return Product
      */

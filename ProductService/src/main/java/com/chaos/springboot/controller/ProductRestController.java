@@ -1,7 +1,8 @@
 package com.chaos.springboot.controller;
+
 import com.chaos.springboot.dto.ProductDto;
-import com.chaos.springboot.service.ProductService;
-import com.chaos.springboot.service.SimpleProductService;
+import com.chaos.springboot.service.AdvancedProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,12 +13,13 @@ import java.util.List;
 @RequestMapping("/api")
 public class ProductRestController {
 
-    private final ProductService productService = new SimpleProductService();
+    @Autowired
+    private AdvancedProductService productService;
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
-    public List<ProductDto> products(@RequestParam(value = "page",required = false) Integer page)  {
-        if (page == null ||page < 0) {
+    public List<ProductDto> products(@RequestParam(value = "page", required = false) Integer page) {
+        if (page == null || page < 0) {
             page = 0;
         }
         return productService.getProducts(page);
@@ -52,14 +54,14 @@ public class ProductRestController {
     @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/products/rating")
     public ProductDto postRating(@RequestBody ProductDto newProduct) {
-        if (newProduct.getRating() != null && ( newProduct.getRating() > 5 || newProduct.getRating() < 0)) {
+        if (newProduct.getRating() != null && (newProduct.getRating() > 5 || newProduct.getRating() < 0)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating x must be in the format 0 <= x <= 5");
         }
         return productService.submitRating(newProduct);
     }
 
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping(value = {"products/rating/top","/products/rating/top/{k}"})
+    @GetMapping(value = {"products/rating/top", "/products/rating/top/{k}"})
     public List<ProductDto> getTopKRating(@PathVariable(required = false) Integer k) {
         if (k == null) {
             k = 10;

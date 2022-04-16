@@ -28,16 +28,18 @@ public class ProductDto implements Serializable {
     private Double rating;
 
 
-    public ProductDto(String name, String ean, Integer ratingCounter, Double rating)   {
+    public ProductDto(String name, String ean, Integer ratingCounter, Double rating) {
         this.name = name;
         this.ean = ean;
         this.ratingCounter = ratingCounter;
         this.rating = rating;
     }
-    public ProductDto(String name, String ean)   {
+
+    public ProductDto(String name, String ean) {
         this.name = name;
         this.ean = ean;
     }
+
     public ProductDto() {
 
     }
@@ -60,9 +62,9 @@ public class ProductDto implements Serializable {
 
     public String toString() {
         return "ProductDto{" +
-                ", name="+ name +'\'' +
+                ", name=" + name + '\'' +
                 ", ean=" + ean +
-                ", ratingCounter=" + ratingCounter +'\'' +
+                ", ratingCounter=" + ratingCounter + '\'' +
                 ", rating=" + rating + '\'' +
                 '}';
     }

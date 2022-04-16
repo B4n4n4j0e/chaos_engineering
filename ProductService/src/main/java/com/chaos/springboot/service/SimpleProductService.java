@@ -30,7 +30,7 @@ public class SimpleProductService implements ProductService {
      */
     public List<ProductDto> getProducts(int page) {
         List<ProductDto> result = new ArrayList<>();
-        int startPage = (page-1) * 50;
+        int startPage = (page - 1) * 50;
         AtomicInteger i = new AtomicInteger();
         products.forEach((ean, product) -> {
             if (result.size() < 50 && startPage <= i.get()) {

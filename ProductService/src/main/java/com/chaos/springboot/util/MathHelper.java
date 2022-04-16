@@ -1,13 +1,12 @@
 package com.chaos.springboot.util;
 
-import org.springframework.web.server.ResponseStatusException;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class MathHelper {
     /**
      * Rounds double
+     *
      * @param value ProductDTO to be evaluated
      * @return rounded double
      */

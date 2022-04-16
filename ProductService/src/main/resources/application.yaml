@@ -5,6 +5,18 @@ spring:
   mvc:
     # Deactivates logging of default exceptions which are handled by DefaultHandlerExceptionResolver
     log-resolved-exception: false
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: spring
+    # use url jdbc:mariadb://localhost:3306/spring if docker is running local
+    url: jdbc:mariadb://mariadb:3306/spring
+    password: spring
+  jpa:
+    hibernate:
+      #auto updates schema
+      ddl-auto: update
+      #recommended to deactivate according to spring logging
+    open-in-view: false
 
 #Activates Prometheus logging
 management:

@@ -2,15 +2,21 @@ version: "3.9"
 volumes:
   grafana-volume-1:
   prometheus-volume-1:
+  database-volume-1:
 
 networks:
   grafana:
   metrics:
+  database:
 
 services:
   product-service:
-    restart: always
+    depends_on:
+      - mariadb
     deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
       resources:
         limits:
           cpus: "0.5"
@@ -20,6 +26,28 @@ services:
       - "8080:8080"
     networks:
       - metrics
+      - database
+
+  mariadb:
+    image: mariadb:10.8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "spring"
+      MYSQL_USER: "spring"
+      MYSQL_PASSWORD: "spring"
+    volumes:
+      - database-volume-1:/var/lib/mysql
+      - ./src/main/resources/init.sql:/data/application/init.sql
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    command: --init-file /data/application/init.sql
+    networks:
+      database:
 
   prometheus:
     image: prom/prometheus:v2.34.0
