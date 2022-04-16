@@ -1,7 +1,7 @@
 package com.chaos.springboot.controller;
 
 import com.chaos.springboot.dto.ProductDto;
-import com.chaos.springboot.service.AdvancedProductService;
+import com.chaos.springboot.service.ProductCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 public class ProductRestController {
 
     @Autowired
-    private AdvancedProductService productService;
+    private ProductCacheService productService;
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
@@ -67,6 +67,15 @@ public class ProductRestController {
             k = 10;
         }
         return productService.getTopKRating(k);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping(value = {"products/access/top", "/products/access/top/{size}"})
+    public List<ProductDto> getTopKAccess(@PathVariable(required = false) Integer size) {
+        if (size == null) {
+            size = 10;
+        }
+        return productService.getTopKAccess(size);
     }
 
 }

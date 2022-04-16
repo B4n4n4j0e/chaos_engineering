@@ -3,11 +3,13 @@ volumes:
   grafana-volume-1:
   prometheus-volume-1:
   database-volume-1:
+  redis-volume-1:
 
 networks:
   grafana:
   metrics:
   database:
+  redis:
 
 services:
   product-service:
@@ -27,6 +29,7 @@ services:
     networks:
       - metrics
       - database
+      - redis
     command:
       - ':ProductService:run'
   mariadb:
@@ -104,3 +107,34 @@ services:
       - "9100"
     networks:
       - metrics
+
+  node-1-redis:
+    image: redis:6.2.6
+    ports:
+      - "6379"
+    volumes:
+      - redis-volume-1:/data
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      redis:
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.37.0
+    environment:
+      REDIS_ADDR: "node-1-redis:6379"
+    depends_on:
+      - prometheus
+    ports:
+      - "9121"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 200M
+    networks:
+      metrics:
+      redis:
