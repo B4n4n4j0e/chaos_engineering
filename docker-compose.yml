@@ -111,8 +111,6 @@ services:
     image: redis:6.2.6
     ports:
       - "6379"
-    volumes:
-      - redis-volume-1:/data
     deploy:
       resources:
         limits:
