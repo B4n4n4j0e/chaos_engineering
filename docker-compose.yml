@@ -250,6 +250,3 @@ services:
     networks:
       metrics:
       redis:
-    command:
-      - "-redis.addr=' '"
-      - "-is-cluster"
