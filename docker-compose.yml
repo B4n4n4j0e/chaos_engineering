@@ -20,6 +20,8 @@ services:
       - "8080:8080"
     networks:
       - metrics
+    command:
+      - ':ProductService:run'
 
   prometheus:
     image: prom/prometheus:v2.34.0
