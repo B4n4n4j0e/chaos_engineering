@@ -30,7 +30,8 @@ public class ProductCacheService implements ProductService {
      * @return list of ProductDtos .
      */
     public List<ProductDto> getProducts(int page) {
-        return advancedProductService.getProducts(page);
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -41,17 +42,8 @@ public class ProductCacheService implements ProductService {
      * @throws ResponseStatusException if entitiy not found
      */
     public ProductDto getProductById(Long id) {
-        if (redisUtility.hasKey(id.toString())) {
-            return redisUtility.getValue(id.toString());
-        }
-
-        Product product = productRepository.findById(id).orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-        });
-        ProductDto productDto = converter.convertToDto(product);
-
-        redisUtility.setValue(productDto);
-        return converter.convertToDto(product);
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -62,7 +54,8 @@ public class ProductCacheService implements ProductService {
      * @throws ResponseStatusException if entity already exists or wrong ean type
      */
     public ProductDto createProduct(ProductDto newProduct) {
-        return advancedProductService.createProduct(newProduct);
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -73,22 +66,10 @@ public class ProductCacheService implements ProductService {
      * @throws ResponseStatusException if entitiy not found or wrong ean type
      */
     public ProductDto updateProduct(ProductDto newProduct) {
-        try {
-            Product product = productRepository.findById(Long.parseLong(newProduct.getEan())).orElseThrow(() -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-            });
-            if (!product.getName().equals(newProduct.getName())) {
-                product.setName(newProduct.getName());
-            }
-            productRepository.save(product);
-            return converter.convertToDto(product);
-
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        } finally {
-            redisUtility.deleteByKey(newProduct.getEan());
-        }
+        // TODO: Implement
+        return null;
     }
+
 
     /**
      * Deletes ProductDto in local list
@@ -97,12 +78,8 @@ public class ProductCacheService implements ProductService {
      * @throws ResponseStatusException if entitiy not found
      */
     public void deleteProduct(Long id) {
-        redisUtility.deleteByKey(id.toString());
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-        }
+        // TODO: Implement
+
     }
 
     /**
@@ -114,21 +91,9 @@ public class ProductCacheService implements ProductService {
      */
     @Override
     public ProductDto submitRating(ProductDto ratedProduct) {
-        try {
-            long id = Long.parseLong(ratedProduct.getEan());
-            Product updatedProduct = productRepository.findById(id).orElseThrow(() -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-            });
-            updatedProduct.incrementRatingCounter();
-            updatedProduct.setRating(ratedProduct.getRating() + updatedProduct.getRating());
-            productRepository.save(updatedProduct);
-            ProductDto newProduct = converter.convertToDto(updatedProduct);
-            ratedProduct.setRating(updatedProduct.getCalculatedRating());
-            return newProduct;
+        // TODO: Implement
+        return null;
 
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        }
     }
 
     /**
@@ -139,11 +104,13 @@ public class ProductCacheService implements ProductService {
      */
     @Override
     public List<ProductDto> getTopKRating(int k) {
-        return advancedProductService.getTopKRating(k);
+        // TODO: Implement
+        return null;
     }
 
     public List<ProductDto> getTopKAccess(int size) {
-        return redisUtility.getTopKAccess(size);
+        // TODO: Implement
+        return null;
     }
 
 }

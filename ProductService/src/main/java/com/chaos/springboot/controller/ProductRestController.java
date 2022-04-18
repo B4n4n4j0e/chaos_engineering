@@ -71,11 +71,9 @@ public class ProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/access/top", "/products/access/top/{size}"})
-    public List<ProductDto> getTopKAccess(@PathVariable(required = false) Integer size) {
-        if (size == null) {
-            size = 10;
-        }
-        return productService.getTopKAccess(size);
+    public List<ProductDto> getTopKAccess() {
+        // TODO: Implement
+        return null;
     }
 
 }

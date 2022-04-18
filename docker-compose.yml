@@ -3,7 +3,6 @@ volumes:
   grafana-volume-1:
   prometheus-volume-1:
   database-volume-1:
-  redis-volume-1:
 
 networks:
   grafana:
@@ -130,11 +129,6 @@ services:
       - prometheus
     ports:
       - "9121"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 200M
     networks:
       metrics:
       redis:
