@@ -43,7 +43,7 @@ services:
       MYSQL_PASSWORD: "spring"
     volumes:
       - database-volume-1:/var/lib/mysql
-      - ./src/main/resources/init.sql:/data/application/init.sql
+      - ./src/ProductService/main/resources/init.sql:/data/application/init.sql
     deploy:
       resources:
         limits:
