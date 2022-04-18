@@ -34,13 +34,14 @@ scrape_configs:
   # config for the Redis target that the exporter will scrape
   - job_name: 'redis_exporter_targets'
     static_configs:
+      #@todo insert ip addresses
       - targets:
-          - redis://173.17.0.3:6379
-          - redis://173.17.0.4:6379
-          - redis://173.17.0.5:6379
-          - redis://173.17.0.6:6379
-          - redis://173.17.0.7:6379
-          - redis://173.17.0.8:6379
+          - redis://ip1:port
+          - redis://ip2:port
+          - redis://ip3:port
+          - redis://ip4:port
+          - redis://ip5:port
+          - redis://ip6:port
     metrics_path: /scrape
     relabel_configs:
       - source_labels: [__address__]

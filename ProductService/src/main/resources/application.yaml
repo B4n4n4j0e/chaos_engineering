@@ -10,8 +10,10 @@ spring:
   # redis configuration
   redis:
     cluster:
+      # must be true to enable cluster config
       enabled: true
-      nodes: 173.17.0.3:6379, 173.17.0.4:6379, 173.17.0.5:6379
+      # @todo insert nodes ip's here
+      nodes: ip1,ip2,ip3
       maxRedirects: 2
     host: node-1-redis
     port: 6379
