@@ -44,10 +44,3 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: redis-exporter:9121
-
-
-  # config for scraping the exporter itself
-  - job_name: 'redis_exporter'
-    static_configs:
-      - targets:
-          - redis-exporter:9121
