@@ -1,27 +1,10 @@
+server:
+  port: 8081
+
 spring:
-  # sets url of price-service
-  price-service:
-    url: http://price-service:8081
   application:
     # Name of the application (important for logging)
-    name: ProductService
-  # activates ResilientProductRestControllers
-  controller:
-    resilient: true
-  # deactivates redis as repository
-  data:
-    redis:
-      repositories:
-        enabled: false
-  # redis configuration
-  redis:
-    cluster:
-      enabled: true
-      nodes: 173.17.0.3:6379, 173.17.0.4:6379, 173.17.0.5:6379
-      maxRedirects: 2
-    host: node-1-redis
-    port: 6379
-    timeout: 300
+    name: PriceService
   mvc:
     # Deactivates logging of default exceptions which are handled by DefaultHandlerExceptionResolver
     log-resolved-exception: false
@@ -29,7 +12,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     username: spring
     # use url jdbc:mariadb://localhost:3306/spring if docker is running local
-    url: jdbc:mariadb://mariadb:3306/spring
+    url: jdbc:mariadb://mariadb-price:3306/spring
     password: spring
   jpa:
     hibernate:

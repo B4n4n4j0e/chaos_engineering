@@ -34,15 +34,38 @@ dependencies {
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.6.6'
 
-    implementation (group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.6.5'){
-        exclude( group: 'io.lettuce')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.6.5') {
+        exclude(group: 'io.lettuce')
     }
 // https://mvnrepository.com/artifact/redis.clients/jedis
     implementation group: 'redis.clients', name: 'jedis', version: '3.8.0'
 
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.6.6'
+
+    // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-micrometer
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-micrometer', version: '1.7.1'
+
+    // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-bulkhead
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-bulkhead', version: '1.7.1'
+
+    // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-circuitbreaker
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-circuitbreaker', version: '1.7.1'
+
+// https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-ratelimiter
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-ratelimiter', version: '1.7.1'
+
+// https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retry
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-retry', version: '1.7.1'
+// https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-timelimiter
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-timelimiter', version: '1.7.1'
+
+// https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-all
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-all', version: '1.7.1'
+
+    implementation project(":Shared")
+
 
 }
-
 
 
 // necessary for Docker build script
@@ -66,11 +89,10 @@ test {
     useJUnitPlatform()
 }
 
-task wrapper(type: Wrapper){
+task wrapper(type: Wrapper) {
     gradleVersion = '7.4'
 }
 
 task prepareKotlinBuildScriptModel {
 
 }
-sourceCompatibility = '11'

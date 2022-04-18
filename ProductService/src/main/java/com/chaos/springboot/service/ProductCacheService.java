@@ -114,21 +114,7 @@ public class ProductCacheService implements ProductService {
      */
     @Override
     public ProductDto submitRating(ProductDto ratedProduct) {
-        try {
-            long id = Long.parseLong(ratedProduct.getEan());
-            Product updatedProduct = productRepository.findById(id).orElseThrow(() -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-            });
-            updatedProduct.incrementRatingCounter();
-            updatedProduct.setRating(ratedProduct.getRating() + updatedProduct.getRating());
-            productRepository.save(updatedProduct);
-            ProductDto newProduct = converter.convertToDto(updatedProduct);
-            ratedProduct.setRating(updatedProduct.getCalculatedRating());
-            return newProduct;
-
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        }
+        return advancedProductService.submitRating(ratedProduct);
     }
 
     /**

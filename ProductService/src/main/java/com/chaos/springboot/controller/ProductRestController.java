@@ -1,14 +1,19 @@
 package com.chaos.springboot.controller;
 
 import com.chaos.springboot.dto.ProductDto;
+import com.chaos.springboot.service.AdvancedPriceService;
 import com.chaos.springboot.service.ProductCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@ConditionalOnProperty(prefix = "spring", name = "controller.resilient", havingValue = "false", matchIfMissing = true)
 @RestController
 @RequestMapping("/api")
 public class ProductRestController {
@@ -16,9 +21,12 @@ public class ProductRestController {
     @Autowired
     private ProductCacheService productService;
 
+    @Autowired
+    private AdvancedPriceService priceService;
+
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
-    public List<ProductDto> products(@RequestParam(value = "page", required = false) Integer page) {
+    public List<ProductDto> products(@RequestParam(value = "page", required = false) @Min(0) Integer page) {
         if (page == null || page < 0) {
             page = 0;
         }
@@ -27,7 +35,7 @@ public class ProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products/{id}")
-    public ProductDto product(@PathVariable Long id) {
+    public ProductDto product(@PathVariable @Min(1) Long id) {
         return productService.getProductById(id);
     }
 
@@ -62,7 +70,7 @@ public class ProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/rating/top", "/products/rating/top/{k}"})
-    public List<ProductDto> getTopKRating(@PathVariable(required = false) Integer k) {
+    public List<ProductDto> getTopKRating(@PathVariable(required = false) @Min(1) Integer k) {
         if (k == null) {
             k = 10;
         }
@@ -71,11 +79,19 @@ public class ProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/access/top", "/products/access/top/{size}"})
-    public List<ProductDto> getTopKAccess(@PathVariable(required = false) Integer size) {
+    public List<ProductDto> getTopKAccess(@PathVariable(required = false) @Min(1) Integer size) {
         if (size == null) {
             size = 10;
         }
         return productService.getTopKAccess(size);
     }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping(value = {"products/price"})
+    public ProductDto getPrice(@RequestParam(value = "shop") @Min(1) long shopId, @RequestParam(value = "ean") @Min(1) long ean) {
+        Mono<ProductDto> productDtoMono = priceService.getProductByEanAndShopId(shopId, ean);
+        return productDtoMono.block();
+    }
+
 
 }

@@ -10,8 +10,7 @@ import java.util.Objects;
 
 public class ProductDto implements Serializable {
     @JsonProperty
-    @NotNull
-    @NotEmpty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String name;
 
     @JsonProperty
@@ -31,6 +30,10 @@ public class ProductDto implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double views;
 
+    @JsonProperty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double price;
+
     public ProductDto(String name, String ean, Integer ratingCounter, Double rating) {
         this.name = name;
         this.ean = ean;
@@ -41,6 +44,19 @@ public class ProductDto implements Serializable {
     public ProductDto(String name, String ean) {
         this.name = name;
         this.ean = ean;
+    }
+
+    public ProductDto(String ean, double price) {
+        this.price = price;
+        this.ean = ean;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public ProductDto() {

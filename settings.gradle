@@ -1,3 +1,5 @@
 rootProject.name = 'Chaos'
 include 'ProductService'
+include 'PriceService'
+include 'Shared'
 
