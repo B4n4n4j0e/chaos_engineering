@@ -4,7 +4,7 @@ import com.chaos.springboot.dto.ProductDto;
 
 
 public interface ProductService {
-
+    // TODO: Implement interface
     ProductDto getProductByEanAndShopId(long ean, long shopId);
 
     public ProductDto createProduct(ProductDto productDto, long shopId);

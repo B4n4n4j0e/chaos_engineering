@@ -1,9 +1,8 @@
 package com.chaos.springboot.controller;
 
 import com.chaos.springboot.dto.ProductDto;
-import com.chaos.springboot.service.AdvancedPriceService;
-import com.chaos.springboot.service.AdvancedProductService;
-import com.chaos.springboot.service.ProductCacheService;
+import com.chaos.springboot.products.Product;
+import com.chaos.springboot.service.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -52,9 +51,9 @@ public class ResilientProductRestController {
     @Autowired
     private AdvancedProductService advancedProductService;
     @Autowired
-    private ProductCacheService productCacheService;
+    private ProductService productCacheService;
     @Autowired
-    private AdvancedPriceService priceService;
+    private PriceService priceService;
 
     public ResilientProductRestController(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
@@ -68,161 +67,60 @@ public class ResilientProductRestController {
 
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
     public List<ProductDto> products(@RequestParam(value = "page", required = false) Integer page) {
-        if (page == null || page < 0) {
-            page = 0;
-        }
-
-        Integer finalPage = page;
-        return execute(() -> productCacheService.getProducts(finalPage));
+        // TODO: Implement
+        return null;
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products/{id}")
     public ProductDto product(@PathVariable @Min(1) Long id) {
-        return executeWithFallback(() -> productCacheService.getProductById(id), throwable -> advancedProductService.getProductById(id));
-    }
+        // TODO: Implement
+        return null;    }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/products")
     public ProductDto post(@RequestBody ProductDto newProduct) {
-        return execute(() -> productCacheService.createProduct(newProduct));
-
+        // TODO: Implement
+        return null;
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PutMapping("/products")
     public ProductDto update(@RequestBody ProductDto newProduct) {
-        return execute(() -> productCacheService.updateProduct(newProduct));
-    }
+        // TODO: Implement
+        return null;    }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @DeleteMapping("/products/{id}")
     public void delete(@PathVariable Long id) {
-        executeWithFallback(() -> {
-                    productCacheService.deleteProduct(id);
-                    return 0;
-                },
-                (throwable -> {
-                    advancedProductService.deleteProduct(id);
-                    return 1;
-                }));
+        // TODO: Implement
     }
 
 
-    @ResponseStatus(value = HttpStatus.OK)
     @PostMapping("/products/rating")
     public ProductDto postRating(@RequestBody ProductDto newProduct) {
-        if (newProduct.getRating() != null && (newProduct.getRating() > 5 || newProduct.getRating() < 0)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating x must be in the format 0 <= x <= 5");
-        }
-        return execute(() -> productCacheService.submitRating(newProduct));
+        // TODO: Implement
+        return null;
     }
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/rating/top", "/products/rating/top/{k}"})
     public List<ProductDto> getTopKRating(@PathVariable(required = false)  Integer k) {
-        if (k == null || k <= 0) {
-            k = 10;
-        }
-        Integer finalK = k;
-        return execute(() -> productCacheService.getTopKRating(finalK));
+        // TODO: Implement
+        return null;
+
     }
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/access/top", "/products/access/top/{size}"})
     public List<ProductDto> getTopKAccess(@PathVariable(required = false)  Integer size) {
-        if (size == null || size <= 0) {
-            size = 10;
-        }
-        Integer finalSize = size;
-        return execute(() -> productCacheService.getTopKAccess(finalSize));
+        // TODO: Implement
+        return null;
     }
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/price"})
     public ProductDto getPrice(@RequestParam(value = "shop") @Min(1) long shopId, @RequestParam(value = "ean") @Min(1) long ean) {
-        // Async function
-        Mono<ProductDto> productDtoMono = priceService.getProductByEanAndShopId(shopId, ean);
-        ProductDto ratedProduct;
-        try {
-            ratedProduct = this.product(ean);
-            // Is catched to prevent a 404 error if product does not exist in db
-        } catch (ResponseStatusException e) {
-            ratedProduct = new ProductDto();
-        }
-
-        ProductDto finalRatedProduct = ratedProduct;
-        CompletableFuture<ProductDto> result = executeAsyncWithFallback(() -> {
-            productDtoMono
-                    .doOnError(throwable -> {
-                        if (finalRatedProduct.getName() == null) {
-                            // is created to trigger an execution Exception
-                            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
-                        }
-                    }).doOnSuccess(dto -> {
-                        // on success set price
-                        finalRatedProduct.setPrice(dto.getPrice());
-                        finalRatedProduct.setEan(dto.getEan());
-                        // waits for response
-                    }).block();
-            return finalRatedProduct;
-        }, throwable -> {
-            // checks whether the product exists locally and raises an exception if it does not exist locally and remotely
-            if (finalRatedProduct.getEan() != null) {
-                return finalRatedProduct;
-            }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
-        });
-        try {
-            return result.get();
-        } catch (InterruptedException e) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "This service is currently unavailable, please try again later");
-        } catch (ExecutionException e) {
-            if (e.getCause() instanceof ResponseStatusException) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
-            }
-        }
-        return finalRatedProduct;
-    }
-
-
-    private <T> T execute(Supplier<T> supplier) {
-        return Decorators.ofSupplier(supplier)
-                .withCircuitBreaker(circuitBreaker)
-                .withBulkhead(bulkhead)
-                .withRetry(retry)
-                .get();
-    }
-
-    private <T> T executeWithFallback(Supplier<T> supplier, Function<Throwable, T> fallback) {
-        return Decorators.ofSupplier(supplier)
-                .withCircuitBreaker(circuitBreaker)
-                .withBulkhead(bulkhead)
-                .withRetry(retry)
-                .withFallback(fallback)
-                .get();
-    }
-
-    private <T> CompletableFuture<T> executeAsync(Supplier<T> supplier) {
-        return Decorators.ofSupplier(supplier)
-                .withThreadPoolBulkhead(threadPoolBulkhead)
-                .withTimeLimiter(timeLimiter, scheduler)
-                .withCircuitBreaker(circuitBreaker)
-                .withRetry(retry, scheduler)
-                .get().toCompletableFuture();
-    }
-
-    private <T> CompletableFuture<T> executeAsyncWithFallback(Supplier<T> supplier, Function<Throwable, T> fallback) {
-        return Decorators.ofSupplier(supplier)
-                .withThreadPoolBulkhead(threadPoolBulkhead)
-                .withTimeLimiter(timeLimiter, scheduler)
-                .withCircuitBreaker(circuitBreaker)
-                .withFallback(Arrays.asList(TimeoutException.class, CallNotPermittedException.class, BulkheadFullException.class),
-                        fallback)
-                .get().toCompletableFuture();
+        // TODO: Implement
+        return null;
     }
 
 

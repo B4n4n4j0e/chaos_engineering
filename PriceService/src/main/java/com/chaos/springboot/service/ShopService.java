@@ -6,6 +6,7 @@ import java.util.List;
 
 
 public interface ShopService {
+    // TODO: Implement interface
 
     public List<Shop> getShops(int page);
 
