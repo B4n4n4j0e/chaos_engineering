@@ -2,16 +2,11 @@ version: "3.9"
 
 services:
   product-service:
-    restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
     build: .
     ports:
       - "8080:8080"
-
+    command:
+      - ':ProductService:run'
   prometheus:
     image: prom/prometheus:v2.34.0
     volumes:
