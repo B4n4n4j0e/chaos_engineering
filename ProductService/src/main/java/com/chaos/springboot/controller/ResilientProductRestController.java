@@ -70,7 +70,7 @@ public class ResilientProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/products")
-    public List<ProductDto> products(@RequestParam(value = "page", required = false) @Min(0) Integer page) {
+    public List<ProductDto> products(@RequestParam(value = "page", required = false) Integer page) {
         if (page == null || page < 0) {
             page = 0;
         }
@@ -123,8 +123,8 @@ public class ResilientProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/rating/top", "/products/rating/top/{k}"})
-    public List<ProductDto> getTopKRating(@PathVariable(required = false) @Min(1) Integer k) {
-        if (k == null) {
+    public List<ProductDto> getTopKRating(@PathVariable(required = false)  Integer k) {
+        if (k == null || k <= 0) {
             k = 10;
         }
         Integer finalK = k;
@@ -133,8 +133,8 @@ public class ResilientProductRestController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = {"products/access/top", "/products/access/top/{size}"})
-    public List<ProductDto> getTopKAccess(@PathVariable(required = false) @Min(1) Integer size) {
-        if (size == null) {
+    public List<ProductDto> getTopKAccess(@PathVariable(required = false)  Integer size) {
+        if (size == null || size <= 0) {
             size = 10;
         }
         Integer finalSize = size;
