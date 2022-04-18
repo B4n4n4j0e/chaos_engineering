@@ -30,10 +30,8 @@ public class AdvancedProductService implements ProductService {
      * @return list of ProductDtos .
      */
     public List<ProductDto> getProducts(int page) {
-        List<ProductDto> productDtos = new ArrayList<>();
-        List<Product> products = productRepository.findAll(PageRequest.of(page, 50)).getContent();
-        products.forEach(product -> productDtos.add(converter.convertToDto(product)));
-        return productDtos;
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -44,10 +42,8 @@ public class AdvancedProductService implements ProductService {
      * @throws ResponseStatusException if entitiy not found
      */
     public ProductDto getProductById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-        });
-        return converter.convertToDto(product);
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -58,18 +54,8 @@ public class AdvancedProductService implements ProductService {
      * @throws ResponseStatusException if entity already exists or wrong ean type
      */
     public ProductDto createProduct(ProductDto newProduct) {
-        try {
-            if (!productRepository.existsById(Long.parseLong(newProduct.getEan()))) {
-                Product product = converter.convertToEntity(newProduct);
-                productRepository.save(product);
-                return newProduct;
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "entity already exists");
-            }
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        }
-
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -80,19 +66,9 @@ public class AdvancedProductService implements ProductService {
      * @throws ResponseStatusException if entitiy not found or wrong ean type
      */
     public ProductDto updateProduct(ProductDto newProduct) {
-        try {
-            Product product = productRepository.findById(Long.parseLong(newProduct.getEan())).orElseThrow(() -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-            });
-            if (!product.getName().equals(newProduct.getName())) {
-                product.setName(newProduct.getName());
-            }
-            productRepository.save(product);
-            return converter.convertToDto(product);
+        // TODO: Implement
+        return null;
 
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        }
     }
 
     /**
@@ -102,11 +78,8 @@ public class AdvancedProductService implements ProductService {
      * @throws ResponseStatusException if entitiy not found
      */
     public void deleteProduct(Long id) {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-        }
+        // TODO: Implement
+        return null;
     }
 
     /**
@@ -118,21 +91,8 @@ public class AdvancedProductService implements ProductService {
      */
     @Override
     public ProductDto submitRating(ProductDto ratedProduct) {
-        try {
-            long id = Long.parseLong(ratedProduct.getEan());
-            Product updatedProduct = productRepository.findById(id).orElseThrow(() -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
-            });
-            updatedProduct.incrementRatingCounter();
-            updatedProduct.setRating(ratedProduct.getRating() + updatedProduct.getRating());
-            productRepository.save(updatedProduct);
-            ProductDto newProduct = converter.convertToDto(updatedProduct);
-            ratedProduct.setRating(updatedProduct.getCalculatedRating());
-            return newProduct;
-
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EAN must be a number");
-        }
+        // TODO: Implement
+        return null
     }
 
     /**
@@ -143,12 +103,9 @@ public class AdvancedProductService implements ProductService {
      */
     @Override
     public List<ProductDto> getTopKRating(int k) {
-        List<ProductDto> productDtos = new ArrayList<>();
-        List<Product> products = productRepository.findAll(PageRequest.of(0, k, Sort.by("rating")
-                        .and(Sort.by("ratingCounter")).descending()))
-                .getContent();
-        products.forEach(product -> productDtos.add(converter.convertToDto(product)));
-        return productDtos;
+        // TODO: Implement
+        return null
     }
+
 }
 

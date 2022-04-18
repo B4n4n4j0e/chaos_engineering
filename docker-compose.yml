@@ -2,7 +2,6 @@ version: "3.9"
 volumes:
   grafana-volume-1:
   prometheus-volume-1:
-  database-volume-1:
 
 networks:
   grafana:
@@ -40,13 +39,8 @@ services:
       MYSQL_USER: "spring"
       MYSQL_PASSWORD: "spring"
     volumes:
-      - database-volume-1:/var/lib/mysql
       - ./ProductService/src/main/resources/init.sql:/data/application/init.sql
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 200M
+
     command: --init-file /data/application/init.sql
     networks:
       database:
